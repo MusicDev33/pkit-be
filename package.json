@@ -1,0 +1,26 @@
+{
+  "name": "press-kit-backend",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "env": "^0.0.2",
+    "express": "^4.18.2",
+    "googleapis": "^118.0.0",
+    "http-errors": "~1.6.3",
+    "jade": "^1.9.2",
+    "morgan": "~1.9.1"
+  },
+  "description": "Writing the backend for my press kit apps",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "press-kit-backend"
+  },
+  "author": "Cameron Kueneman",
+  "license": "ISC"
+}
