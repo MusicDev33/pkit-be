@@ -1,2 +1,6 @@
 .env
 SECRET-API-KEY.json
+
+/node_modules
+
+/.vscode
