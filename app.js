@@ -1,7 +1,10 @@
 const express = require("express");
+const dotenv = require("dotenv").config();
 const { google } = require("googleapis");
 const sheets = google.sheets("v4");
+const googleAuthLib = require("google-auth-library");
 
+const env = process.env;
 let app = express();
 const port = 3000;
 
@@ -14,12 +17,17 @@ app.listen(port, () => {
   console.log(`Listening on ${port}`);
 });
 
-function authorize() {
-  const auth = new google.auth.GoogleAuth({
-    keyFile: "./SECRET-API-KEY.json",
-    scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-  });
-  return auth;
+async function authorize() {
+  try {
+    const auth = await new google.auth.GoogleAuth({
+      keyFile: "./SECRET-API-KEY.json",
+      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+    });
+    console.log(auth);
+    return auth;
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 async function getAraSheet() {
@@ -39,6 +47,5 @@ async function getAraSheet() {
     console.error(err);
   }
 }
-
-// const testing = getAraSheet();
-// console.log(testing);
+const test = JSON.parse(env.CREDS);
+console.log("Would be nice to hear " + test);
