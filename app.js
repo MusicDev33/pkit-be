@@ -2,50 +2,54 @@ const express = require("express");
 const dotenv = require("dotenv").config();
 const { google } = require("googleapis");
 const sheets = google.sheets("v4");
-const googleAuthLib = require("google-auth-library");
+const { JWT } = require("google-auth-library");
+const fs = require("fs");
 
 const env = process.env;
+const keyFile = env.GOOGLE_APPLICATION_CREDENTIALS;
+
 let app = express();
 const port = 3000;
 
-app.get("/ara", (req, res, next) => {
-  const response = getAraSheet();
-  res.send(response);
+app.get("/ara", async (req, res, next) => {
+  try {
+    const response = await getAraSheet();
+    console.log(response);
+    res.send(response);
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 app.listen(port, () => {
   console.log(`Listening on ${port}`);
 });
 
-async function authorize() {
-  try {
-    const auth = await new google.auth.GoogleAuth({
-      keyFile: "./SECRET-API-KEY.json",
-      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-    });
-    console.log(auth);
-    return auth;
-  } catch (err) {
-    console.error(err);
-  }
-}
+const jsonCreds = JSON.parse(fs.readFileSync(keyFile, "utf-8"));
+// TODO don't forget to give the service account access to the sheets in question
+// maybe a folder or something lol
+const client = new JWT({
+  email: jsonCreds.client_email,
+  key: jsonCreds.private_key,
+  scopes: [
+    "https://www.googleapis.com/auth/cloud-platform",
+    "https://www.googleapis.com/auth/spreadsheets",
+  ],
+});
 
 async function getAraSheet() {
-  const auth = authorize();
   const request = {
     spreadsheetId: "14TKTeY8TFYASxbetfyKc8GJRDEtp-zIZOEBbRbLkumM",
-    range: "A2:D2",
+    range: "A:D",
     valueRenderOption: "FORMATTED_VALUE",
     dateTimeRenderOption: "FORMATTED_STRING",
-    auth: auth,
+    auth: client,
   };
 
   try {
     const response = await sheets.spreadsheets.values.get(request);
-    return response;
+    return response.data.values;
   } catch (err) {
     console.error(err);
   }
 }
-const test = JSON.parse(env.CREDS);
-console.log("Would be nice to hear " + test);
