@@ -14,7 +14,15 @@ const port = 3000;
 app.get("/ara", async (req, res, next) => {
   try {
     const response = await getAraSheet();
-    console.log(response);
+    res.send(response);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+app.post("/ara", async (req, res, next) => {
+  try {
+    const response = await postNewMerchAra(req);
     res.send(response);
   } catch (error) {
     console.error(error);
@@ -39,7 +47,7 @@ const client = new JWT({
 
 async function getAraSheet() {
   const request = {
-    spreadsheetId: "14TKTeY8TFYASxbetfyKc8GJRDEtp-zIZOEBbRbLkumM",
+    spreadsheetId: env.SHEET_ID,
     range: "A:D",
     valueRenderOption: "FORMATTED_VALUE",
     dateTimeRenderOption: "FORMATTED_STRING",
@@ -51,5 +59,33 @@ async function getAraSheet() {
     return response.data.values;
   } catch (err) {
     console.error(err);
+  }
+}
+
+// RECEIVES OBJECT formatted
+// {
+//     "range": string,
+//     "majorDimension": 'ROWS',
+//     "values": [[row data], [next row data]]
+//   }
+async function postNewMerchAra(req) {
+  console.log(req.query.ValueRange);
+  const dataToAppend = JSON.parse(req.query.ValueRange);
+  const params = {
+    includeValuesInResponse: true,
+    insertDataOption: "OVERWRITE",
+    range: "G:O",
+    responseDateTimeRenderOption: "FORMATTED_STRING",
+    responseValueRenderOption: "FORMATTED_VALUE",
+    spreadsheetId: env.SHEET_ID,
+    valueInputOption: "RAW",
+    requestBody: dataToAppend,
+    auth: client,
+  };
+  try {
+    const response = await sheets.spreadsheets.values.append(params);
+    return response.data.values;
+  } catch (error) {
+    console.error(error);
   }
 }
