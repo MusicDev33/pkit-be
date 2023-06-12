@@ -1,9 +1,10 @@
+import dotenv from "dotenv";
 import { google } from "googleapis";
 import { JWT } from "google-auth-library";
 
 const sheets = google.sheets("v4");
 
-require("dotenv").config();
+dotenv.config();
 const env = process.env;
 
 const gClient = new JWT({
@@ -15,7 +16,7 @@ const gClient = new JWT({
   ],
 });
 
-const getAraSheet = async () => {
+export const getAraSheet = async () => {
   const request = {
     spreadsheetId: env.SHEET_ID,
     range: "A:D",
@@ -32,7 +33,7 @@ const getAraSheet = async () => {
   }
 }
 
-const postNewAraMerch = async () => {
+export const postNewAraMerch = async () => {
   console.log(req.query.ValueRange);
   const params = {
     includeValuesInResponse: true,
@@ -52,9 +53,4 @@ const postNewAraMerch = async () => {
   } catch (error) {
     console.error(error);
   }
-}
-
-export default {
-  getAraSheet,
-  postNewAraMerch
 }

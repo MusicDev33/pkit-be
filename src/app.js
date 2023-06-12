@@ -1,5 +1,5 @@
 import express from "express";
-import { getAraSheet, postNewMerchAra } from "./Services/GoogleService";
+import { getAraSheet, postNewAraMerch } from "./services/g-service.js";
 
 const env = process.env;
 
@@ -17,7 +17,7 @@ app.get("/ara", async (_, res) => {
 
 app.post("/ara", async (req, res) => {
   try {
-    const response = await postNewMerchAra(req);
+    const response = await postNewAraMerch(req);
     res.send(response);
   } catch (error) {
     console.error(error);
